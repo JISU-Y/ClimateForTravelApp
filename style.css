@@ -56,7 +56,7 @@ h1 {
 .month {
   background-color: #faf1e6;
   color: #334443;
-  font-size: 17px;
+  font-size: 14px;
   font-weight: bold;
   width: 50px;
   height: 50px;
@@ -67,9 +67,10 @@ h1 {
   border-radius: 5px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   cursor: pointer;
-  transition: transform 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 .month:active {
-  transform: scale(0.96);
+  transform: scale(0.92);
+  font-size: calc(14 * 0.92) px;
 }
