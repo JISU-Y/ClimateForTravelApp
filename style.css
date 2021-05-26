@@ -116,4 +116,9 @@ h1 {
 .result-container h2,
 .result-container p {
   margin-top: 20px;
+  text-align: center;
+}
+
+.result-container span {
+  text-align: center;
 }

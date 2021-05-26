@@ -48,12 +48,9 @@ buttonResult.addEventListener("click", () => {
     return;
   }
 
-  console.log(
-    `${CLIMATE_BASE}mavg/mpi_echam5/a2/tas/2020/2039/${travelWhere.id}`
-  );
-
   getClimate(
-    `${CLIMATE_BASE}mavg/mpi_echam5/a2/tas/2020/2039/${travelWhere.id}`
+    `${CLIMATE_BASE}mavg/mpi_echam5/a2/tas/2020/2039/${travelWhere.id}`,
+    `${CLIMATE_BASE}mavg/mpi_echam5/a2/pr/2020/2039/${travelWhere.id}`
   );
   // mpi_echam5/a2/ // 기후변화 시나리오 종류 중 하나
   // ensemble // 합친거
@@ -90,60 +87,66 @@ async function getCountries(url) {
 // tmin_means Average daily minimum temperature
 // tmax_means Average daily maximum temperature
 
-async function getClimate(url) {
-  console.log(url);
-  const res = await fetch(url);
-  const data = await res.json();
+async function getClimate(url_tas, url_pr) {
+  // tas(기온)
+  const res_tas = await fetch(url_tas);
+  const data_tas = await res_tas.json();
+  console.log(data_tas);
 
-  console.log(data[0].monthVals); // 1월(0) 부터 12월(11) 까지의 배열
+  // pr(강수량)
+  const res_pr = await fetch(url_pr);
+  const data_pr = await res_pr.json();
+  console.log(data_pr);
 
-  console.log(data[0].monthVals[travelWhen.id - 1]); // month는 1부터 시작 / data는 0부터 시작
-  showResult(data[0].monthVals[travelWhen.id - 1]);
+  // console.log(data_tas[0].monthVals); // 1월(0) 부터 12월(11) 까지의 배열
+
+  // console.log(data_tas[0].monthVals[travelWhen.id - 1]); // month는 1부터 시작 / data는 0부터 시작
+
+  showResult(
+    data_tas[0].monthVals[travelWhen.id - 1],
+    data_pr[0].monthVals[travelWhen.id - 1]
+  );
 }
 
 // 결과 총망라해서 여행 적합 판단하기
-function showResult(temper) {
+function showResult(temper, rain) {
+  let feeling = [];
   // 소수점 정리
   temper = temper.toFixed(1);
-  // 기온(tas), 강수량(pr)
+  rain = rain.toFixed(1);
+
+  // 기온(tas)
   if (temper < 8) {
-    console.log(`${travelWhen.id}월에 ${travelWhere.innerHTML} 가면 추워요`);
-    createResultEl(0, travelWhen.id, travelWhere.innerHTML, temper, "추워요");
+    feeling.push("추워요");
   } else if (temper >= 8 && temper < 13) {
-    console.log(
-      `${travelWhen.id}월에 ${travelWhere.innerHTML} 가면 조금 쌀쌀해요`
-    );
-    createResultEl(
-      1,
-      travelWhen.id,
-      travelWhere.innerHTML,
-      temper,
-      "조금 쌀쌀해요"
-    );
+    feeling.push("조금 쌀쌀해요");
   } else if (temper >= 13 && temper < 20) {
-    console.log(
-      `${travelWhen.id}월에 ${travelWhere.innerHTML} 가면 날씨 좋아요, 딱 이예요`
-    );
-    createResultEl(
-      2,
-      travelWhen.id,
-      travelWhere.innerHTML,
-      temper,
-      "날씨 좋아요, 딱 이예요"
-    );
+    feeling.push("날씨 좋아요, 딱 이에요");
   } else if (temper >= 20 && temper < 26) {
-    console.log(`${travelWhen.id}월에 ${travelWhere.innerHTML} 가면 더워요`);
-    createResultEl(3, travelWhen.id, travelWhere.innerHTML, temper, "더워요");
+    feeling.push("더워요");
   } else {
-    console.log(`${travelWhen.id}월에 ${travelWhere.innerHTML} 가면 쪄 죽어요`);
-    createResultEl(
-      4,
-      travelWhen.id,
-      travelWhere.innerHTML,
-      temper,
-      "쪄 죽어요"
-    );
+    feeling.push("쪄 죽어요");
   }
+
+  // 강수량(pr)
+  if (rain < 50) {
+    feeling.push("눈/비는 거의 안 와요");
+  } else if (rain >= 50 && rain < 100) {
+    feeling.push("눈/비가 이따금씩 와요");
+  } else if (rain >= 100 && rain < 200) {
+    feeling.push("눈/비가 자주 와요");
+  } else {
+    feeling.push("눈/비가 거의 매일 와요");
+  }
+
+  createResultEl(
+    0,
+    travelWhen.id,
+    travelWhere.innerHTML,
+    temper,
+    rain,
+    feeling
+  );
 
   // input 및 버튼 text들 지우기 // 지우고 새로고침 버튼으로 대체?
   regionSearch.value = "";
@@ -159,18 +162,29 @@ function createResultEl(
   where,
   temperature,
   precipitation,
-  feeling
+  feelings
 ) {
+  console.log(feelings);
+
   finalResult.innerHTML = `
   <img
   src="${seasonImg[season]}"
   alt="${temperature}"
 />
   <h2>${when}월 ${where} 여행</h2>
-  <p>
-    "평균 기온은 ${temperature}도, 평균 강수량은 ${precipitation} 이 때 여기가면 ${feeling}"
+  <p class="pResult">
+    "평균 기온은 ${temperature}도, 평균 강수량은 ${precipitation}mm"<br>
+    이 때 여기가면
   </p>
   `;
+
+  const pResult = document.querySelector(".pResult");
+  const spanFeelings = document.createElement("span");
+  feelings.forEach((feeling) => {
+    spanFeelings.innerHTML += feeling + "</br>";
+  });
+
+  pResult.after(spanFeelings);
 }
 
 // input 넣을 때 국가 이름 검색되도록 (추천까지)
