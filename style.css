@@ -95,13 +95,25 @@ h1 {
 }
 
 .result-container {
+  width: 100%;
   margin: 30px 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  position: relative;
+  color: #fff;
 }
 
+.result-container img {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  max-width: 800px;
+  z-index: -100;
+}
+
+.result-container h2,
 .result-container p {
   margin-top: 20px;
 }

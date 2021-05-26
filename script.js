@@ -24,6 +24,14 @@ const finalResult = document.querySelector(".result-container");
 let countryCode = ""; // input 값이 들어갈 자리
 let travelMonth = "";
 
+const seasonImg = [
+  "https://images.unsplash.com/photo-1542601098-8fc114e148e2?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTF8fHdpbnRlcnxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
+  "https://images.unsplash.com/photo-1603959620938-4a8eae84709a?ixid=MnwxMjA3fDB8MHxzZWFyY2h8OXx8YXV0b21ufGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60",
+  "https://images.unsplash.com/photo-1600647993560-11a92e039466?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTN8fHNwcmluZ3xlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60",
+  "https://images.unsplash.com/photo-1473496169904-658ba7c44d8a?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8c3VtbWVyfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60",
+  "https://images.unsplash.com/photo-1527513167268-961466388f0d?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTF8fGhvdCUyMHN1bW1lcnxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60",
+];
+
 months.forEach((month) => {
   month.addEventListener("click", () => {
     travelMonth = month.dataset.month;
@@ -95,12 +103,13 @@ function showResult(temper) {
   // 기온(tas), 강수량(pr)
   if (temper < 8) {
     console.log(`${travelWhen.id}월에 ${travelWhere.innerHTML} 가면 추워요`);
-    createResultEl(travelWhen.id, travelWhere.innerHTML, temper, "추워요");
+    createResultEl(0, travelWhen.id, travelWhere.innerHTML, temper, "추워요");
   } else if (temper >= 8 && temper < 13) {
     console.log(
       `${travelWhen.id}월에 ${travelWhere.innerHTML} 가면 조금 쌀쌀해요`
     );
     createResultEl(
+      1,
       travelWhen.id,
       travelWhere.innerHTML,
       temper,
@@ -111,6 +120,7 @@ function showResult(temper) {
       `${travelWhen.id}월에 ${travelWhere.innerHTML} 가면 날씨 좋아요, 딱 이예요`
     );
     createResultEl(
+      2,
       travelWhen.id,
       travelWhere.innerHTML,
       temper,
@@ -118,10 +128,16 @@ function showResult(temper) {
     );
   } else if (temper >= 20 && temper < 26) {
     console.log(`${travelWhen.id}월에 ${travelWhere.innerHTML} 가면 더워요`);
-    createResultEl(travelWhen.id, travelWhere.innerHTML, temper, "더워요");
+    createResultEl(3, travelWhen.id, travelWhere.innerHTML, temper, "더워요");
   } else {
     console.log(`${travelWhen.id}월에 ${travelWhere.innerHTML} 가면 쪄 죽어요`);
-    createResultEl(travelWhen.id, travelWhere.innerHTML, temper, "쪄 죽어요");
+    createResultEl(
+      4,
+      travelWhen.id,
+      travelWhere.innerHTML,
+      temper,
+      "쪄 죽어요"
+    );
   }
 
   // input 및 버튼 text들 지우기 // 지우고 새로고침 버튼으로 대체?
@@ -132,11 +148,15 @@ function showResult(temper) {
   travelWhere.id = "";
 }
 
-function createResultEl(when, where, temperature, feeling) {
+function createResultEl(season, when, where, temperature, feeling) {
   finalResult.innerHTML = `
+  <img
+  src="${seasonImg[season]}"
+  alt="${temperature}"
+/>
   <h2>${when}월 ${where} 여행</h2>
   <p>
-    "기온은 ${temperature}도, 이 때 여기가면 ${feeling}"
+    "평균 기온은 ${temperature}도, 이 때 여기가면 ${feeling}"
   </p>
   `;
 }
