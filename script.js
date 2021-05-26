@@ -1,11 +1,11 @@
 // climate base url
 const CLIMATE_BASE =
-  "https://climatedataapi.worldbank.org/climateweb/rest/v1/country/"; // json 포맷이 default
+  "http://climatedataapi.worldbank.org/climateweb/rest/v1/country/"; // json 포맷이 default
 // http://climatedataapi.worldbank.org/climateweb/rest/v1/country/type/var/start/end/ISO3[.ext]
 //   "http://climatedataapi.worldbank.org/climateweb/rest/v1/country/mavg/tas/2020/2039/BRA"
 
 // country base url / countryCode(2글자)
-const COUNTNAME_BASE = "https://api.worldbank.org/v2/country/"; // ${countryCode}?format=json // json default 아님
+const COUNTNAME_BASE = "http://api.worldbank.org/v2/country/"; // ${countryCode}?format=json // json default 아님
 // http://api.worldbank.org/v2/country/${countryCode}?format=json
 
 const regionForm = document.querySelector(".region");
@@ -25,11 +25,11 @@ let countryCode = ""; // input 값이 들어갈 자리
 let travelMonth = "";
 
 const seasonImg = [
-  "https://images.unsplash.com/photo-1542601098-8fc114e148e2?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTF8fHdpbnRlcnxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
-  "https://images.unsplash.com/photo-1603959620938-4a8eae84709a?ixid=MnwxMjA3fDB8MHxzZWFyY2h8OXx8YXV0b21ufGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60",
-  "https://images.unsplash.com/photo-1600647993560-11a92e039466?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTN8fHNwcmluZ3xlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60",
-  "https://images.unsplash.com/photo-1473496169904-658ba7c44d8a?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8c3VtbWVyfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60",
-  "https://images.unsplash.com/photo-1527513167268-961466388f0d?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTF8fGhvdCUyMHN1bW1lcnxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60",
+  "http://images.unsplash.com/photo-1542601098-8fc114e148e2?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTF8fHdpbnRlcnxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
+  "http://images.unsplash.com/photo-1603959620938-4a8eae84709a?ixid=MnwxMjA3fDB8MHxzZWFyY2h8OXx8YXV0b21ufGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60",
+  "http://images.unsplash.com/photo-1600647993560-11a92e039466?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTN8fHNwcmluZ3xlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60",
+  "http://images.unsplash.com/photo-1473496169904-658ba7c44d8a?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8c3VtbWVyfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60",
+  "http://images.unsplash.com/photo-1527513167268-961466388f0d?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTF8fGhvdCUyMHN1bW1lcnxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60",
 ];
 
 months.forEach((month) => {
@@ -48,8 +48,12 @@ buttonResult.addEventListener("click", () => {
     return;
   }
 
+  console.log(
+    `${CLIMATE_BASE}mavg/mpi_echam5/a2/tas/2020/2039/${travelWhere.id}`
+  );
+
   getClimate(
-    CLIMATE_BASE + "mavg/mpi_echam5/a2/tas/2020/2039/" + travelWhere.id
+    `${CLIMATE_BASE}mavg/mpi_echam5/a2/tas/2020/2039/${travelWhere.id}`
   );
   // mpi_echam5/a2/ // 기후변화 시나리오 종류 중 하나
   // ensemble // 합친거
@@ -60,7 +64,7 @@ regionForm.addEventListener("submit", (e) => {
 
   countryCode = regionSearch.value; // 검색한 국가코드
   getCountries(
-    `https://api.worldbank.org/v2/country/${countryCode}?format=json`
+    `http://api.worldbank.org/v2/country/${countryCode}?format=json`
   );
 });
 
@@ -87,6 +91,7 @@ async function getCountries(url) {
 // tmax_means Average daily maximum temperature
 
 async function getClimate(url) {
+  console.log(url);
   const res = await fetch(url);
   const data = await res.json();
 
@@ -168,3 +173,4 @@ function createResultEl(season, when, where, temperature, feeling) {
 // 기온만 말고 강수량까지 나타내기
 // 날씨별 옷차림 알려주기
 // 일교차 같은 것도 나와있으면 내용 추가
+// fetch 실패 handle
