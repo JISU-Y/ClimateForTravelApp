@@ -25,11 +25,11 @@ let countryCode = ""; // input 값이 들어갈 자리
 let travelMonth = "";
 
 const seasonImg = [
-  "http://images.unsplash.com/photo-1542601098-8fc114e148e2?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTF8fHdpbnRlcnxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
-  "http://images.unsplash.com/photo-1603959620938-4a8eae84709a?ixid=MnwxMjA3fDB8MHxzZWFyY2h8OXx8YXV0b21ufGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60",
-  "http://images.unsplash.com/photo-1600647993560-11a92e039466?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTN8fHNwcmluZ3xlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60",
-  "http://images.unsplash.com/photo-1473496169904-658ba7c44d8a?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8c3VtbWVyfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60",
-  "http://images.unsplash.com/photo-1527513167268-961466388f0d?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTF8fGhvdCUyMHN1bW1lcnxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60",
+  "https://images.unsplash.com/photo-1542601098-8fc114e148e2?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTF8fHdpbnRlcnxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
+  "https://images.unsplash.com/photo-1603959620938-4a8eae84709a?ixid=MnwxMjA3fDB8MHxzZWFyY2h8OXx8YXV0b21ufGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60",
+  "https://images.unsplash.com/photo-1600647993560-11a92e039466?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTN8fHNwcmluZ3xlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60",
+  "https://images.unsplash.com/photo-1473496169904-658ba7c44d8a?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8c3VtbWVyfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60",
+  "https://images.unsplash.com/photo-1527513167268-961466388f0d?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTF8fGhvdCUyMHN1bW1lcnxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60",
 ];
 
 months.forEach((month) => {
@@ -111,20 +111,26 @@ async function getClimate(url_tas, url_pr) {
 // 결과 총망라해서 여행 적합 판단하기
 function showResult(temper, rain) {
   let feeling = [];
+  let season;
   // 소수점 정리
   temper = temper.toFixed(1);
   rain = rain.toFixed(1);
 
   // 기온(tas)
   if (temper < 8) {
+    season = 0;
     feeling.push("추워요");
   } else if (temper >= 8 && temper < 13) {
+    season = 1;
     feeling.push("조금 쌀쌀해요");
   } else if (temper >= 13 && temper < 20) {
+    season = 2;
     feeling.push("날씨 좋아요, 딱 이에요");
   } else if (temper >= 20 && temper < 26) {
+    season = 3;
     feeling.push("더워요");
   } else {
+    season = 4;
     feeling.push("쪄 죽어요");
   }
 
@@ -140,7 +146,7 @@ function showResult(temper, rain) {
   }
 
   createResultEl(
-    0,
+    season,
     travelWhen.id,
     travelWhere.innerHTML,
     temper,
@@ -195,3 +201,5 @@ function createResultEl(
 // 날씨별 옷차림 알려주기
 // 일교차 같은 것도 나와있으면 내용 추가
 // fetch 실패 handle (https 도메인에서 http api를 호출하고 있어서 안됐었음 surge에서 배포하면 됨)
+
+//http://unnatural-legs.surge.sh/
