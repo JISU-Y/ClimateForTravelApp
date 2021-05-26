@@ -14,6 +14,7 @@ const months = document.querySelectorAll(".month");
 const buttonResult = document.querySelector(".btn-result");
 const travelWhen = document.querySelector(".when");
 const travelWhere = document.querySelector(".where");
+const finalResult = document.querySelector(".result-container");
 
 // input에 검색한 단어 아니면 b만 눌러도 b로 시작하는 애들 다 보여주기 br 이면 brazil 띄우고 br을 ${}
 // input에 입력된 b를 저기 URL에서 찾아서 보여줌
@@ -35,6 +36,7 @@ buttonResult.addEventListener("click", () => {
   // get the result
   if (regionSearch.value === "" || travelMonth === "") {
     // do nothing
+    alert("where and when exactly do you want to go?");
     return;
   }
 
@@ -88,20 +90,53 @@ async function getClimate(url) {
 
 // 결과 총망라해서 여행 적합 판단하기
 function showResult(temper) {
+  // 소수점 정리
+  temper = temper.toFixed(1);
   // 기온(tas), 강수량(pr)
   if (temper < 8) {
     console.log(`${travelWhen.id}월에 ${travelWhere.innerHTML} 가면 추워요`);
+    createResultEl(travelWhen.id, travelWhere.innerHTML, temper, "추워요");
   } else if (temper >= 8 && temper < 13) {
     console.log(
       `${travelWhen.id}월에 ${travelWhere.innerHTML} 가면 조금 쌀쌀해요`
+    );
+    createResultEl(
+      travelWhen.id,
+      travelWhere.innerHTML,
+      temper,
+      "조금 쌀쌀해요"
     );
   } else if (temper >= 13 && temper < 20) {
     console.log(
       `${travelWhen.id}월에 ${travelWhere.innerHTML} 가면 날씨 좋아요, 딱 이예요`
     );
+    createResultEl(
+      travelWhen.id,
+      travelWhere.innerHTML,
+      temper,
+      "날씨 좋아요, 딱 이예요"
+    );
   } else if (temper >= 20 && temper < 26) {
     console.log(`${travelWhen.id}월에 ${travelWhere.innerHTML} 가면 더워요`);
+    createResultEl(travelWhen.id, travelWhere.innerHTML, temper, "더워요");
   } else {
     console.log(`${travelWhen.id}월에 ${travelWhere.innerHTML} 가면 쪄 죽어요`);
+    createResultEl(travelWhen.id, travelWhere.innerHTML, temper, "쪄 죽어요");
   }
+
+  // input 및 버튼 text들 지우기 // 지우고 새로고침 버튼으로 대체?
+  regionSearch.value = "";
+  travelWhen.innerHTML = "몇";
+  travelWhen.id = "";
+  travelWhere.innerHTML = "어디로";
+  travelWhere.id = "";
+}
+
+function createResultEl(when, where, temperature, feeling) {
+  finalResult.innerHTML = `
+  <h2>${when}월 ${where} 여행</h2>
+  <p>
+    "기온은 ${temperature}도, 이 때 여기가면 ${feeling}"
+  </p>
+  `;
 }
