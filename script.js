@@ -153,7 +153,14 @@ function showResult(temper) {
   travelWhere.id = "";
 }
 
-function createResultEl(season, when, where, temperature, feeling) {
+function createResultEl(
+  season,
+  when,
+  where,
+  temperature,
+  precipitation,
+  feeling
+) {
   finalResult.innerHTML = `
   <img
   src="${seasonImg[season]}"
@@ -161,7 +168,7 @@ function createResultEl(season, when, where, temperature, feeling) {
 />
   <h2>${when}월 ${where} 여행</h2>
   <p>
-    "평균 기온은 ${temperature}도, 이 때 여기가면 ${feeling}"
+    "평균 기온은 ${temperature}도, 평균 강수량은 ${precipitation} 이 때 여기가면 ${feeling}"
   </p>
   `;
 }
@@ -173,4 +180,4 @@ function createResultEl(season, when, where, temperature, feeling) {
 // 기온만 말고 강수량까지 나타내기
 // 날씨별 옷차림 알려주기
 // 일교차 같은 것도 나와있으면 내용 추가
-// fetch 실패 handle
+// fetch 실패 handle (https 도메인에서 http api를 호출하고 있어서 안됐었음 surge에서 배포하면 됨)
