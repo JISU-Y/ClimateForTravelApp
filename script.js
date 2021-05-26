@@ -1,11 +1,11 @@
 // climate base url
 const CLIMATE_BASE =
-  "http://climatedataapi.worldbank.org/climateweb/rest/v1/country/"; // json 포맷이 default
+  "https://climatedataapi.worldbank.org/climateweb/rest/v1/country/"; // json 포맷이 default
 // http://climatedataapi.worldbank.org/climateweb/rest/v1/country/type/var/start/end/ISO3[.ext]
 //   "http://climatedataapi.worldbank.org/climateweb/rest/v1/country/mavg/tas/2020/2039/BRA"
 
 // country base url / countryCode(2글자)
-const COUNTNAME_BASE = "http://api.worldbank.org/v2/country/"; // ${countryCode}?format=json // json default 아님
+const COUNTNAME_BASE = "https://api.worldbank.org/v2/country/"; // ${countryCode}?format=json // json default 아님
 // http://api.worldbank.org/v2/country/${countryCode}?format=json
 
 const regionForm = document.querySelector(".region");
@@ -60,7 +60,7 @@ regionForm.addEventListener("submit", (e) => {
 
   countryCode = regionSearch.value; // 검색한 국가코드
   getCountries(
-    `http://api.worldbank.org/v2/country/${countryCode}?format=json`
+    `https://api.worldbank.org/v2/country/${countryCode}?format=json`
   );
 });
 
@@ -160,3 +160,11 @@ function createResultEl(season, when, where, temperature, feeling) {
   </p>
   `;
 }
+
+// input 넣을 때 국가 이름 검색되도록 (추천까지)
+// img도 날씨에 맞는 이미지를 random으로 불러오기
+// 몇월 어디로 여행 버튼 결과 나왔을 때는 다시하기 버튼으로 바꾸기
+// img안에 들어가는 h2, p 태그 안에 글씨들 사진마다 색 다르게 하기
+// 기온만 말고 강수량까지 나타내기
+// 날씨별 옷차림 알려주기
+// 일교차 같은 것도 나와있으면 내용 추가
