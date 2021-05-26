@@ -83,4 +83,25 @@ async function getClimate(url) {
   console.log(data[0].monthVals); // 1월(0) 부터 12월(11) 까지의 배열
 
   console.log(data[0].monthVals[travelWhen.id - 1]); // month는 1부터 시작 / data는 0부터 시작
+  showResult(data[0].monthVals[travelWhen.id - 1]);
+}
+
+// 결과 총망라해서 여행 적합 판단하기
+function showResult(temper) {
+  // 기온(tas), 강수량(pr)
+  if (temper < 8) {
+    console.log(`${travelWhen.id}월에 ${travelWhere.innerHTML} 가면 추워요`);
+  } else if (temper >= 8 && temper < 13) {
+    console.log(
+      `${travelWhen.id}월에 ${travelWhere.innerHTML} 가면 조금 쌀쌀해요`
+    );
+  } else if (temper >= 13 && temper < 20) {
+    console.log(
+      `${travelWhen.id}월에 ${travelWhere.innerHTML} 가면 날씨 좋아요, 딱 이예요`
+    );
+  } else if (temper >= 20 && temper < 26) {
+    console.log(`${travelWhen.id}월에 ${travelWhere.innerHTML} 가면 더워요`);
+  } else {
+    console.log(`${travelWhen.id}월에 ${travelWhere.innerHTML} 가면 쪄 죽어요`);
+  }
 }
