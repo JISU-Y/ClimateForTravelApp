@@ -15,6 +15,7 @@ const buttonResult = document.querySelector(".btn-result");
 const travelWhen = document.querySelector(".when");
 const travelWhere = document.querySelector(".where");
 const finalResult = document.querySelector(".result-container");
+const countryContainer = document.querySelector(".country-container");
 
 // input에 검색한 단어 아니면 b만 눌러도 b로 시작하는 애들 다 보여주기 br 이면 brazil 띄우고 br을 ${}
 // input에 입력된 b를 저기 URL에서 찾아서 보여줌
@@ -65,16 +66,23 @@ months.forEach((month) => {
   });
 });
 
-regionForm.addEventListener("keydown", (e) => {
+regionSearch.addEventListener("keydown", (e) => {
   if (!lettersOnly()) {
     return;
   }
+  countryContainer.innerHTML = ""; // item 초기화
+
+  let searchWord;
   // 누르자 마자 검색화면 뜨도록
   // searchWord 넣을때에는 방향키랑 backspace도 막아야함
-  let searchWord =
-    e.keyCode == 8 || e.keyCode == 37 || e.keyCode == 39
-      ? regionSearch.value
-      : regionSearch.value + e.key;
+  if (e.keyCode == 8) {
+    searchWord = regionSearch.value.slice(0, length - 1); // 마지막 글자만 뺌
+  } else {
+    searchWord =
+      e.keyCode == 37 || e.keyCode == 39
+        ? regionSearch.value
+        : regionSearch.value + e.key;
+  }
 
   console.log(e.key);
   console.log(searchWord);
@@ -115,24 +123,60 @@ buttonResult.addEventListener("click", () => {
 async function getCountries(url, searchWord) {
   const res = await fetch(url);
   const data = await res.json();
-  let countries = [];
+  let countries = []; // 없어도 될 듯?
 
+  // 첫글자만 대문자로 바꾸기
+  if (searchWord) {
+    searchWord =
+      searchWord[0].toUpperCase() + searchWord.slice(1, searchWord.length);
+  } else {
+    return;
+  }
+
+  console.log(searchWord);
   // data array안에 0이 page 정보 , 1이 country 정보 / country 정보 안에서 0들이 진짜 정보
   // 297개 국가들 저장
   data[1].forEach((ctry) => {
-    if (ctry.iso2Code.includes(searchWord.toUpperCase())) {
+    if (ctry.name.includes(searchWord)) {
       // includes: ES6 이상에서만 사용 가능 / 해당 글자가 포함되어 있는지 확인
       const { id, iso2Code, name } = ctry;
       countries.push({ id, iso2Code, name });
+      // 검색된 단어가 포함된 국가들 list로 나타내줌 container에
+      createCtryList({ id, iso2Code, name });
     }
   });
 
-  console.log(countries);
+  if (countries.length === 0) {
+    // 검색했는데 없으면
+    createCtryList({ id: 0, iso2Code: 0, name: "(No Result)" });
+  }
 
-  //
-  // 아직 안정함
-  // travelWhere.innerHTML = name;
-  // travelWhere.id = id;
+  console.log(countries);
+}
+
+function createCtryList({ id, iso2Code, name }) {
+  // 일단 얘는 array임
+  /* <div class="country-item">Korea</div> */
+  const countryItem = document.createElement("div");
+  countryItem.classList.add("country-item");
+  countryItem.innerText = name;
+  countryItem.id = id; // 기후 찾을 때 쓸 country id
+  if (id === 0) {
+    // 없는거면
+    countryItem.style.pointerEvents = "none";
+  }
+  countryContainer.appendChild(countryItem);
+
+  // item 선택
+  countryItem.addEventListener("click", (e) => {
+    // console.log(e.target.innerText);
+    regionSearch.value = e.target.innerText;
+    travelWhere.innerHTML = e.target.innerText;
+    travelWhere.id = e.target.id;
+
+    // 클릭 했으면 item 싹 없앰
+    countryContainer.innerHTML = ""; // item 초기화
+  });
 }
 
 // type은 무조건 mavg 여야함(monthly average)
