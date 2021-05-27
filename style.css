@@ -49,10 +49,12 @@ h1 {
   left: 50%;
   width: 200px;
   height: auto;
+  max-height: 300px;
   border-radius: 0 0 3px 3px;
   background-color: cadetblue;
   transform: translateX(-50%);
   z-index: 100;
+  overflow: auto;
 }
 
 /* <div class="country-item">Korea</div> */
@@ -63,11 +65,12 @@ h1 {
   margin-bottom: 1px;
   display: flex;
   align-items: center;
-  line-height: 30px;
+  line-height: 15px;
   padding: 0 8px;
   cursor: pointer;
   font-weight: bold;
   color: dimgray;
+  overflow: hidden;
 }
 
 .country-container .country-item:hover {
