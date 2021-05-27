@@ -21,7 +21,6 @@ const finalResult = document.querySelector(".result-container");
 // 그거 가지고 country ID 알아냄 그게 바로 ISO3 임
 // 거기서 날씨 정보 꺼내서 보여주면 끝!
 
-let countryCode = ""; // input 값이 들어갈 자리
 let travelMonth = "";
 let feelings = [];
 var climateInfo = {};
@@ -40,6 +39,24 @@ const getLengthOfObject = (obj) => {
   return Object.keys(obj).length;
 };
 
+// input 입력 때 알파벳만 되도록
+function lettersOnly() {
+  var charCode = event.keyCode;
+
+  if (
+    (charCode > 64 && charCode < 91) ||
+    (charCode > 96 && charCode < 123) ||
+    charCode == 8 ||
+    charCode == 37 ||
+    charCode == 39
+  ) {
+    // 8 backspace // 37 <- // 39 ->
+    return true;
+  } else {
+    return false;
+  }
+}
+
 months.forEach((month) => {
   month.addEventListener("click", () => {
     travelMonth = month.dataset.month;
@@ -48,11 +65,31 @@ months.forEach((month) => {
   });
 });
 
-console.log(season, climateInfo, feelings);
+regionForm.addEventListener("keydown", (e) => {
+  if (!lettersOnly()) {
+    return;
+  }
+  // 누르자 마자 검색화면 뜨도록
+  // searchWord 넣을때에는 방향키랑 backspace도 막아야함
+  let searchWord =
+    e.keyCode == 8 || e.keyCode == 37 || e.keyCode == 39
+      ? regionSearch.value
+      : regionSearch.value + e.key;
+
+  console.log(e.key);
+  console.log(searchWord);
+  getCountries(
+    `http://api.worldbank.org/v2/country?format=json&per_page=300`,
+    searchWord
+  );
+
+  // 영어 검색 결과
+  // `http://api.worldbank.org/v2/country/${countryCode}?format=json`
+  // 한국어 결과 name이 없네;;
+  // http://api.worldbank.org/v2/ko/country/${countryCode}?format=json
+});
 
 buttonResult.addEventListener("click", () => {
-  console.log(season, climateInfo, feelings);
-
   // get the result
   if (regionSearch.value === "" || travelMonth === "") {
     // do nothing
@@ -73,43 +110,29 @@ buttonResult.addEventListener("click", () => {
   const urlMin = `${CLIMATE_BASE}mavg/ensemble/a2/10/tmin_means/2046/2065/kor`;
   const urlMax = `${CLIMATE_BASE}mavg/ensemble/a2/90/tmax_means/2046/2065/kor`;
   getTemperDiff(urlMin, urlMax);
-
-  // // 기온(tas)별 image
-  // season = temperSeasonImage(realTas);
-
-  console.log(season, climateInfo, feelings);
-
-  // getClimate, getTemperDiff 하면서 feelings에다가 다 담음
-  // 그 다음에 요소 생성, 나타내기
-  // createResultEl(
-  //   season,
-  //   travelWhen.id,
-  //   travelWhere.innerHTML,
-  //   climateInfo,
-  //   feelings
-  // );
 });
 
-regionForm.addEventListener("submit", (e) => {
-  e.preventDefault();
-
-  countryCode = regionSearch.value; // 검색한 국가코드
-  getCountries(
-    `http://api.worldbank.org/v2/country/${countryCode}?format=json`
-  );
-});
-
-async function getCountries(url) {
+async function getCountries(url, searchWord) {
   const res = await fetch(url);
   const data = await res.json();
+  let countries = [];
 
-  const { id, iso2Code, name } = data[1][0];
-  // array안에 0이 page 정보 , 1이 country 정보 / country 정보 안에서 0들이 진짜 정보
+  // data array안에 0이 page 정보 , 1이 country 정보 / country 정보 안에서 0들이 진짜 정보
+  // 297개 국가들 저장
+  data[1].forEach((ctry) => {
+    if (ctry.iso2Code.includes(searchWord.toUpperCase())) {
+      // includes: ES6 이상에서만 사용 가능 / 해당 글자가 포함되어 있는지 확인
+      const { id, iso2Code, name } = ctry;
+      countries.push({ id, iso2Code, name });
+    }
+  });
 
-  console.log(id, iso2Code, name);
+  console.log(countries);
 
-  travelWhere.innerHTML = name;
-  travelWhere.id = id;
+  //
+  // 아직 안정함
+  // travelWhere.innerHTML = name;
+  // travelWhere.id = id;
 }
 
 // type은 무조건 mavg 여야함(monthly average)
@@ -132,15 +155,11 @@ async function getClimate(url_tas, url_pr) {
   const data_pr = await res_pr.json();
   console.log(data_pr);
 
-  console.log(travelWhen.id);
-
   const realTas = data_tas[0].monthVals[travelWhen.id - 1].toFixed(1);
   const realPr = data_pr[0].monthVals[travelWhen.id - 1].toFixed(1);
 
   addToResult(realTas, data_tas[0].variable);
   addToResult(realPr, data_pr[0].variable);
-
-  console.log(season, climateInfo, feelings);
 }
 
 async function getTemperDiff(url_min, url_max) {
@@ -159,14 +178,10 @@ async function getTemperDiff(url_min, url_max) {
     data_diff[i] = data_max[0].monthVals[i] - data_min[0].monthVals[i]; // 일교차 배열 따로 만듦
   }
 
-  console.log(travelWhen.id);
-  console.log(data_diff[travelWhen.id - 1]);
   const realDiff = data_diff[travelWhen.id - 1].toFixed(1);
 
   console.log(data_diff);
   addToResult(realDiff, "diff");
-
-  console.log(season, climateInfo, feelings);
 }
 
 function addToResult(monthVals, param) {
@@ -227,20 +242,6 @@ function temperFeeling(feelings, temperature) {
   }
 }
 
-function temperSeasonImage(temperature) {
-  if (temperature < 8) {
-    return 0;
-  } else if (temperature >= 8 && temperature < 13) {
-    return 1;
-  } else if (temperature >= 13 && temperature < 20) {
-    return 2;
-  } else if (temperature >= 20 && temperature < 26) {
-    return 3;
-  } else {
-    return 4;
-  }
-}
-
 function rainFeeling(feelings, precipitation) {
   if (precipitation < 50) {
     feelings.push("눈/비는 거의 안 와요");
@@ -266,19 +267,17 @@ function tempDiffFeeling(feelings, temperDiff) {
 }
 
 function createResultEl(season, when, where, climateInfo, feelings) {
-  console.log(season, climateInfo, feelings);
-
   finalResult.innerHTML = `
   <img
   src="${seasonImg[season]}"
   alt=""
-/>
+  />
   <h2>${when}월 ${where} 여행</h2>
   <p class="pResult" style="font-size:18px; font-weight:bold;">
     "평균 기온은 ${climateInfo.temperature}도, 평균 강수량은 ${climateInfo.precipitation}mm
-     평균 일교차는 ${climateInfo.tempDifference}도" </br>
-     이 때 여기가면
-     </p>
+    평균 일교차는 ${climateInfo.tempDifference}도" </br>
+    이 때 여기가면
+  </p>
   `;
 
   const pResult = document.querySelector(".pResult");
@@ -310,10 +309,11 @@ function clearInputValues() {
 // 결과 나올 때 어디로 언제쯤 클릭하는 거 다 덮어버리기? 트랜지션으로 쑥 올라오게?
 // img안에 들어가는 h2, p 태그 안에 글씨들 사진마다 색 다르게 하기
 // data 가져올 동안 loading 효과 추가
-// 일교차 같은 것도 나와있으면 내용 추가 => 일교차 있는데 2045 - 2065 예측데이터임..
 // 날씨별 옷차림 알려주기
 
 // 기온만 말고 강수량까지 나타내기
 // fetch 실패 handle (https 도메인에서 http api를 호출하고 있어서 안됐었음 surge에서 배포하면 됨)
+// 일교차 같은 것도 나와있으면 내용 추가 => 일교차 있는데 2045 - 2065 예측데이터임..
 
 //http://unnatural-legs.surge.sh/
+//배포 업데이트 surge --domain site-name.surge.sh

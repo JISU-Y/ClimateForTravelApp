@@ -10,7 +10,12 @@
   <body>
     <h1>어디로 언제쯤?</h1>
     <form class="region">
-      <input type="text" class="regionSearch" placeholder="어디로" />
+      <input
+        type="text"
+        class="regionSearch"
+        placeholder="어디로"
+        onkeypress="return lettersOnly(event)"
+      />
     </form>
     <div class="month-container">
       <div class="month" data-month="1">JAN</div>
