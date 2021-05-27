@@ -24,7 +24,8 @@ const finalResult = document.querySelector(".result-container");
 let countryCode = ""; // input 값이 들어갈 자리
 let travelMonth = "";
 let feelings = [];
-let climateInfo = [];
+var climateInfo = {};
+let season = 0;
 
 const seasonImg = [
   "https://images.unsplash.com/photo-1542601098-8fc114e148e2?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTF8fHdpbnRlcnxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
@@ -33,7 +34,11 @@ const seasonImg = [
   "https://images.unsplash.com/photo-1473496169904-658ba7c44d8a?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8c3VtbWVyfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60",
   "https://images.unsplash.com/photo-1527513167268-961466388f0d?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTF8fGhvdCUyMHN1bW1lcnxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60",
 ];
-let season = 0;
+
+// object 길이 구하는 함수 가져옴
+const getLengthOfObject = (obj) => {
+  return Object.keys(obj).length;
+};
 
 months.forEach((month) => {
   month.addEventListener("click", () => {
@@ -174,19 +179,19 @@ function addToResult(monthVals, param) {
 
   if (param === "tas") {
     // 들어온 게 tas(기온)이면
-    climateInfo.push(monthVals);
+    climateInfo.temperature = monthVals;
     temperFeeling(feelings, monthVals);
   } else if (param === "pr") {
     // 강수량
-    climateInfo.push(monthVals);
+    climateInfo.precipitation = monthVals;
     rainFeeling(feelings, monthVals);
   } else if (param === "diff") {
     // 일교차
-    climateInfo.push(monthVals);
+    climateInfo.tempDifference = monthVals;
     tempDiffFeeling(feelings, monthVals);
   }
 
-  if (climateInfo.length === 3) {
+  if (getLengthOfObject(climateInfo) === 3) {
     //climate 수집 다 끝나야 요소 생성
     createResultEl(
       season,
@@ -270,8 +275,8 @@ function createResultEl(season, when, where, climateInfo, feelings) {
 />
   <h2>${when}월 ${where} 여행</h2>
   <p class="pResult" style="font-size:18px; font-weight:bold;">
-    "평균 기온은 ${climateInfo[0]}도, 평균 강수량은 ${climateInfo[1]}mm
-     평균 일교차는 ${climateInfo[2]}도" </br>
+    "평균 기온은 ${climateInfo.temperature}도, 평균 강수량은 ${climateInfo.precipitation}mm
+     평균 일교차는 ${climateInfo.tempDifference}도" </br>
      이 때 여기가면
      </p>
   `;
