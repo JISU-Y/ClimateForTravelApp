@@ -25,19 +25,22 @@ const countryContainer = document.querySelector(".country-container");
 let travelMonth = "";
 let feelings = [];
 var climateInfo = {};
-let season = 0;
+let season; // seasonImg.~~random 주소 담을 곳
 
-const seasonImg = [
-  "https://images.unsplash.com/photo-1542601098-8fc114e148e2?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTF8fHdpbnRlcnxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
-  "https://images.unsplash.com/photo-1603959620938-4a8eae84709a?ixid=MnwxMjA3fDB8MHxzZWFyY2h8OXx8YXV0b21ufGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60",
-  "https://images.unsplash.com/photo-1600647993560-11a92e039466?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTN8fHNwcmluZ3xlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60",
-  "https://images.unsplash.com/photo-1473496169904-658ba7c44d8a?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8c3VtbWVyfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60",
-  "https://images.unsplash.com/photo-1527513167268-961466388f0d?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTF8fGhvdCUyMHN1bW1lcnxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60",
-];
+let seasonImg = {
+  winterRandom: `https://source.unsplash.com/featured/?winter,cold,snow,freezing&w=700`,
+  automnRandom:
+    "https://source.unsplash.com/featured/?automn,fall,changing-season&w=700",
+  springRandom: "https://source.unsplash.com/featured/?spring,flowers&w=700",
+  summerRandom:
+    "https://source.unsplash.com/featured/?summer,beach,sunny-weather&w=700",
+  hotSummerRandom:
+    "https://source.unsplash.com/featured/?desert,hot-to-death&w=700",
+};
 
 // object 길이 구하는 함수 가져옴
 const getLengthOfObject = (obj) => {
-  return Object.keys(obj).length;
+  return Object.keys(obj).length; // Object.keys(obj)는 key값들을 모두 모아 배열로 반환해줌
 };
 
 // input 입력 때 알파벳만 되도록
@@ -103,6 +106,11 @@ buttonResult.addEventListener("click", () => {
     // do nothing
     alert("where and when exactly do you want to go?");
     return;
+  }
+
+  if (finalResult.innerHTML !== "") {
+    // 결과가 있는 상태이면 없애고 다시 보여줌
+    finalResult.innerHTML = "";
   }
 
   // 평균 기온, 평균 강수량 구하기
@@ -263,25 +271,23 @@ function addToResult(monthVals, param) {
     // // input 및 버튼 text들 지우기 // 지우고 새로고침 버튼으로 대체?
     clearInputValues();
   }
-
-  console.log(season, climateInfo, feelings);
 }
 
 function temperFeeling(feelings, temperature) {
   if (temperature < 8) {
-    season = 0;
+    season = seasonImg.winterRandom;
     feelings.push("추워요");
   } else if (temperature >= 8 && temperature < 13) {
-    season = 1;
+    season = seasonImg.automnRandom;
     feelings.push("조금 쌀쌀해요");
   } else if (temperature >= 13 && temperature < 20) {
-    season = 2;
+    season = seasonImg.springRandom;
     feelings.push("날씨 좋아요, 딱 이에요");
   } else if (temperature >= 20 && temperature < 26) {
-    season = 3;
+    season = seasonImg.summerRandom;
     feelings.push("더워요");
   } else {
-    season = 4;
+    season = seasonImg.hotSummerRandom;
     feelings.push("쪄 죽어요");
   }
 }
@@ -310,10 +316,10 @@ function tempDiffFeeling(feelings, temperDiff) {
   }
 }
 
-function createResultEl(season, when, where, climateInfo, feelings) {
+function createResultEl(seasonImgResult, when, where, climateInfo, feelings) {
   finalResult.innerHTML = `
   <img
-  src="${seasonImg[season]}"
+  src="${seasonImgResult}"
   alt=""
   />
   <h2>${when}월 ${where} 여행</h2>
@@ -342,7 +348,7 @@ function clearInputValues() {
   travelWhere.innerHTML = "어디로";
   travelWhere.id = "";
 
-  season = 0;
+  season = "";
   feelings = [];
   climateInfo = [];
 }
