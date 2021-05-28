@@ -26,9 +26,9 @@ let travelMonth = "";
 let feelings = [];
 var climateInfo = {};
 let season; // seasonImg.~~random 주소 담을 곳
-
 let seasonImg = {
-  winterRandom: `https://source.unsplash.com/featured/?winter,cold,snow,freezing&w=700`,
+  winterRandom:
+    "https://source.unsplash.com/featured/?winter,cold,snow,freezing&w=700",
   automnRandom:
     "https://source.unsplash.com/featured/?automn,fall,changing-season&w=700",
   springRandom: "https://source.unsplash.com/featured/?spring,flowers&w=700",
@@ -328,6 +328,7 @@ function createResultEl(seasonImgResult, when, where, climateInfo, feelings) {
     평균 일교차는 ${climateInfo.tempDifference}도" </br>
     이 때 여기가면
   </p>
+  <button class="retry-btn">다시하기</button>
   `;
 
   const pResult = document.querySelector(".pResult");
@@ -353,9 +354,9 @@ function clearInputValues() {
   climateInfo = [];
 }
 
-// img도 날씨에 맞는 이미지를 random으로 불러오기
-// img안에 들어가는 h2, p 태그 안에 글씨들 사진마다 색 다르게 하기
 // data 가져올 동안 loading 효과 추가
+// 결과 공유 기능
+// img안에 들어가는 h2, p 태그 안에 글씨들 사진마다 색 다르게 하기
 // 날씨별 옷차림 알려주기
 // 몇월 어디로 여행 버튼 결과 나왔을 때는 다시하기 버튼으로 바꾸기
 // 결과 나올 때 어디로 언제쯤 클릭하는 거 다 덮어버리기? 트랜지션으로 쑥 올라오게?
@@ -364,6 +365,7 @@ function clearInputValues() {
 // fetch 실패 handle (https 도메인에서 http api를 호출하고 있어서 안됐었음 surge에서 배포하면 됨)
 // 일교차 같은 것도 나와있으면 내용 추가 => 일교차 있는데 2045 - 2065 예측데이터임..
 // input 넣을 때 국가 이름 검색되도록 (추천까지)
+// img도 날씨에 맞는 이미지를 random으로 불러오기
 
 //http://unnatural-legs.surge.sh/
 //배포 업데이트 surge --domain site-name.surge.sh

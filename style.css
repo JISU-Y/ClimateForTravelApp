@@ -112,7 +112,8 @@ h1 {
   font-size: calc(14 * 0.92) px;
 }
 
-.btn-result {
+.btn-result,
+.result-container .retry-btn {
   background-color: darkslategray;
   color: #fff;
   width: 300px;
@@ -140,6 +141,11 @@ h1 {
   align-items: center;
   position: relative;
   color: #fff;
+  z-index: 100;
+}
+
+.result-container.done {
+  transform: translateY(-205%);
 }
 
 .result-container img {
