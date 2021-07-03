@@ -11,10 +11,14 @@
 3. 기후별 체감 및 강수량별 눈/비 빈도 판단
 
 <!-- Line -->
+#### Main UI Image
 
 <img width="174" alt="Main UI" src="https://user-images.githubusercontent.com/80020227/124286811-484e6880-db8a-11eb-93e2-32eeac25ce7a.PNG">
 
 ---
+
+#### How to use
+![ResultVideo](https://user-images.githubusercontent.com/80020227/124354549-8493ce80-dc47-11eb-8b3e-e617e783afa5.gif)
 
 <!-- font -->
 
