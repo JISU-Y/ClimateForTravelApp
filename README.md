@@ -4,6 +4,8 @@
 
 - 여행 국가 및 여행 예정월 선택 후 평균 기후 정보 표시하며 그에 따른 여행 적합성 판단 어플
 
+[link] https://jisu-y.github.io/ClimateForTravelApp/
+
 ---
 
 ### 주요 기능
